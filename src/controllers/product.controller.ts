@@ -10,4 +10,9 @@ export class ProductController {
   async index(): Promise<Product[]> {
     return this.productService.findAll();
   } 
+  
+  @Post('new')
+  async create(@Body() productData: Product): Promise<Product> {
+    return this.productService.create(productData);
+  }
 }

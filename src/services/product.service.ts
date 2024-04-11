@@ -10,4 +10,9 @@ export class ProductService {
   async findAll(): Promise<Product[]> {
     return this.productModel.find().exec();
   }
+
+  async create(productData: Product): Promise<Product> {
+    const createdProduct = new this.productModel(productData);
+    return createdProduct.save();
+  }
 }
