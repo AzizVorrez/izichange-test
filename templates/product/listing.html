@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des produits</title>
+</head>
+
+<body>
+    <h1>Liste des produits</h1>
+    <ul id="productList"></ul>
+
+    <script>
+        // Fonction pour récupérer la liste des produits depuis l'API
+        async function fetchProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/product');
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des produits');
+                }
+                const products = await response.json();
+                return products;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Fonction pour afficher les produits dans la page HTML
+        async function displayProducts() {
+            const productList = document.getElementById('productList');
+            const products = await fetchProducts();
+            if (products && products.length > 0) {
+                productList.innerHTML = products.map(product => `
+                    <li>${product.name} - ${product.priceHt}
+                        <form action="./edit.html" method="GET">
+                            <input type="hidden" name="id" value="${product._id}">
+                            <button type="submit">Voir</button>
+                        </form>
+                    </li>
+                `).join('');
+            } else {
+                productList.innerHTML = '<li>Aucun produit trouvé</li>';
+            }
+        }
+
+        // Appel de la fonction pour afficher les produits au chargement de la page
+        displayProducts();
+    </script>
+</body>
+
+</html>

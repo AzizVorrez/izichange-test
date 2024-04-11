@@ -15,4 +15,24 @@ export class ProductService {
     const createdProduct = new this.productModel(productData);
     return createdProduct.save();
   }
+
+  async findById(id: string): Promise<Product | null> {
+    try {
+      const product = await this.productModel.findById(id).exec();
+      return product;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  async update(id: string, productData: Product): Promise<Product | null> {
+    try {
+      const updatedProduct = await this.productModel.findByIdAndUpdate(id, productData, { new: true }).exec();
+      return updatedProduct;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
 }

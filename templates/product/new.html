@@ -31,8 +31,7 @@
                 throw new Error('Erreur lors de l\'ajout du produit');
             }
 
-            // Réponse traitée avec succès, redirigez l'utilisateur vers /product
-            window.location.href = 'http://localhost:3000/product'; // Utilise une URL relative
+            window.location.href = './listing.html'; // Utilise une URL relative
         } catch (error) {
             console.error('Erreur:', error.message);
         }

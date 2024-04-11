@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du produit</title>
+</head>
+
+<body>
+    <h1>Détails du produit</h1>
+    <div id="productDetails"></div>
+
+    <script>
+        async function fetchProductDetails(productId) {
+            try {
+                const response = await fetch(`http://localhost:3000/product/edit/${productId}`);
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des détails du produit');
+                }
+                const product = await response.json();
+                return product;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function submitForm(formData) {
+            try {
+                const response = await fetch(`http://localhost:3000/product/edit/${formData.get('id')}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formData.get('name'),
+                        priceHt: parseFloat(formData.get('priceHt'))
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la mise à jour du produit');
+                }
+                window.location.href = './listing.html';
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function displayProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            const productDetailsContainer = document.getElementById('productDetails');
+            const product = await fetchProductDetails(productId);
+            if (product) {
+                productDetailsContainer.innerHTML = `
+                    <form id="productForm" method="POST">
+                        <p><strong>Nom du produit:</strong> <input type="text" name="name" value="${product.name}" required></p>
+                        <p><strong>Prix HT:</strong> <input type="number" name="priceHt" value="${product.priceHt}" required></p>
+                        <input type="hidden" name="id" value="${product.id}">
+                        <button type="submit" id="modifyButton">Modifier</button>
+                    </form>
+                `;
+            } else {
+                productDetailsContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+            }
+
+            document.getElementById('productForm').addEventListener('submit', (event) => {
+                event.preventDefault(); // Empêche le formulaire de se soumettre normalement
+                const formData = new FormData(event.target);
+                submitForm(formData);
+            });
+        }
+
+        displayProductDetails();
+    </script>
+</body>
+
+</html>
